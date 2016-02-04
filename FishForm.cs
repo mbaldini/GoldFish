@@ -464,7 +464,7 @@ namespace GoldFishPet
             if (this.FishEvent != null)
                 FishEvent(this, new FishEventArgs(this, FishEventEnum.Flushed, "was flushed."));
 
-            if (!this.IsDisposed)
+            if (!this.IsDisposed && this.IsHandleCreated)
                 this.Invoke(new Action(() =>
                 {
                     this.timerSpeed.Stop();

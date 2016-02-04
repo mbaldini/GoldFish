@@ -16,6 +16,9 @@ namespace GoldFishPet
         int maxFishies = 25;
         public static System.Threading.ManualResetEvent exitHandle = new System.Threading.ManualResetEvent(false);
         private bool HasClosed = false;
+
+        public readonly TimeSpan MIN_TIME_BETWEEN_BREEDING = TimeSpan.FromMinutes(20);
+        public readonly TimeSpan MIN_TIME_BETWEEN_BREED_ATTEMPTS = TimeSpan.FromSeconds(30);
         
         public parentForm()
         {
@@ -120,8 +123,8 @@ namespace GoldFishPet
                         var daddy = Fishies.FirstOrDefault(dad => dad != mommy && FishiesIntersect(mommy, dad) && dad.IsMature && !dad.mouseDown);
                         if (daddy != null)
                         {
-                            if (DateTime.Now.Subtract(mommy.LastBreedAttempt.GetValueOrDefault(new DateTime())).TotalSeconds > 5 &&
-                                DateTime.Now.Subtract(daddy.LastBreedAttempt.GetValueOrDefault(new DateTime())).TotalSeconds > 5)
+                            if (DateTime.Now.Subtract(mommy.LastBreedAttempt.GetValueOrDefault(new DateTime())) > MIN_TIME_BETWEEN_BREED_ATTEMPTS &&
+                                DateTime.Now.Subtract(daddy.LastBreedAttempt.GetValueOrDefault(new DateTime())) > MIN_TIME_BETWEEN_BREED_ATTEMPTS)
                             {
                                 mommy.LastBreedAttempt = DateTime.Now;
                                 daddy.LastBreedAttempt = DateTime.Now;
@@ -129,8 +132,8 @@ namespace GoldFishPet
                                 // Ensure we have enough fishy quota left.
                                 if (maxFishies > Fishies.Count(x => !x.IsDead))
                                 {
-                                    if (DateTime.Now.Subtract(mommy.LastBred.GetValueOrDefault(new DateTime())).TotalMinutes > 10 &&
-                                        DateTime.Now.Subtract(daddy.LastBred.GetValueOrDefault(new DateTime())).TotalMinutes > 10)
+                                    if (DateTime.Now.Subtract(mommy.LastBred.GetValueOrDefault(new DateTime())) > MIN_TIME_BETWEEN_BREEDING &&
+                                        DateTime.Now.Subtract(daddy.LastBred.GetValueOrDefault(new DateTime())) > MIN_TIME_BETWEEN_BREEDING)
                                     {
                                         // Make a baby!
                                         Log("Attempting to breed");
