@@ -43,8 +43,8 @@ namespace GoldFishPet
 
         void SpawnFishies()
         {
-            var mommyFish = new FishForm(true, new Point(-100, (Screen.PrimaryScreen.Bounds.Height / 2) - 50), 0.5);
-            var daddyFish = new FishForm(false, new Point(Screen.AllScreens.Sum(x => x.Bounds.Width) + 100, (Screen.PrimaryScreen.Bounds.Height / 2) - 50), 0.5);
+            var mommyFish = new FishForm(true, new Point(-100, (Screen.PrimaryScreen.Bounds.Height / 2) - 50), 0.5, FishForm.FishGender.Female);
+            var daddyFish = new FishForm(false, new Point(Screen.AllScreens.Sum(x => x.Bounds.Width) + 100, (Screen.PrimaryScreen.Bounds.Height / 2) - 50), 0.5, FishForm.FishGender.Male);
 
             var random = new Random();
             mommyFish.BirthDate = DateTime.Now.AddMinutes(-1 * random.Next(2, 12));
@@ -67,19 +67,19 @@ namespace GoldFishPet
             switch (e.Action)
             {
                 case FishForm.FishEventEnum.Born:
-                    Log("Fishy was born");
+                    Log("Fishy {0} was born", e.Fish.FullName);
                     break;
                 case FishForm.FishEventEnum.Matured:
-                    Log("Fishy matured");
+                    Log("Fishy {0} matured", e.Fish.FullName);
                     break;
                 case FishForm.FishEventEnum.Died:
                     Fishie_Died_Sadface(sender, e);
                     break;
                 case FishForm.FishEventEnum.Resurrected:
-                    Log("Fishy {0}", e.Reason);
+                    Log("Fishy {0} {1}", e.Fish.FullName, e.Reason);
                     break;
                 case FishForm.FishEventEnum.Flushed:
-                    Log("Fishy {0}", e.Reason);
+                    Log("Fishy {0} {1}", e.Fish.FullName, e.Reason);
                     break;
                 default:
                     break;
@@ -88,7 +88,7 @@ namespace GoldFishPet
 
         void Fishie_Died_Sadface(object sender, FishForm.FishEventArgs e)
         {
-            Log("Fishy {0}", e.Reason);
+            Log("Fishy {0} {1}", e.Fish.FullName, e.Reason);
             var t = new System.Threading.Thread(() => 
             {
                 exitHandle.WaitOne(1000 * 60 * 5);
@@ -120,7 +120,7 @@ namespace GoldFishPet
                 {
                     if (mommy.IsMature && !mommy.mouseDown)
                     {
-                        var daddy = Fishies.FirstOrDefault(dad => dad != mommy && FishiesIntersect(mommy, dad) && dad.IsMature && !dad.mouseDown);
+                        var daddy = Fishies.FirstOrDefault(dad => dad != mommy && dad.Gender != mommy.Gender && FishiesIntersect(mommy, dad) && dad.IsMature && !dad.mouseDown);
                         if (daddy != null)
                         {
                             if (DateTime.Now.Subtract(mommy.LastBreedAttempt.GetValueOrDefault(new DateTime())) > MIN_TIME_BETWEEN_BREED_ATTEMPTS &&

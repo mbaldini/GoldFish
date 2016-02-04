@@ -11,8 +11,10 @@ namespace GoldFishPet
 {
     public partial class FishForm : Form
     {
+        public static RandomNameGeneratorLibrary.PersonNameGenerator NameGenerator = new RandomNameGeneratorLibrary.PersonNameGenerator();
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string FullName { get { return string.Format("{0} {1}", FirstName, LastName); } }
         public bool IsMature { get; set; }
         public bool IsDead { get; set; }
         public DateTime? LastBred = null;
@@ -22,6 +24,8 @@ namespace GoldFishPet
         public bool toRight = true;
         public bool speedMode = false;
         public double MaxSizeScale = 1f + ((double)(new Random().Next(-10, 10)) / 80);
+        public Point Destination { get; set; }
+        public FishGender Gender { get; set; }
 
         Point oldPoint = new Point(0, 0);
         public bool mouseDown = false;
@@ -55,13 +59,14 @@ namespace GoldFishPet
             InitFish();
         }
 
-        public FishForm(bool movingRight, Point location, double scale = 1)
+        public FishForm(bool movingRight, Point location, double scale = 1, FishGender gender = FishGender.None)
         {
             InitializeComponent();
             toRight = movingRight;
             left = location.X;
             top = location.Y;
             SizeScale = scale;
+            Gender = gender;
             InitFish();
         }
 
@@ -85,6 +90,12 @@ namespace GoldFishPet
             this.MouseUp += new MouseEventHandler(Form2_MouseUp);
             this.MouseMove += new MouseEventHandler(Form2_MouseMove);
 
+            if (this.Gender == FishGender.None)
+                this.Gender = (FishGender)(new Random().Next(1, 3));
+
+            if (string.IsNullOrEmpty(this.FirstName) && string.IsNullOrEmpty(this.LastName))
+                GenerateName();
+            
             var t = new System.Threading.Thread(() => { parentForm.exitHandle.WaitOne(new Random().Next(20000 * 60, 80000 * 60)); Kill("died of old age"); });
             t.Start();
         }
@@ -170,7 +181,7 @@ namespace GoldFishPet
                 count++;
                 if (count > MaxCount)
                 {
-                    MaxCount = new Random().Next(70) + 30;
+                    MaxCount = new Random().Next(70) + 20;
                     if (IsDead)
                     {
                         stepX = 0;
@@ -197,6 +208,9 @@ namespace GoldFishPet
                         if ((int)(MaxCount / 2) == new Random().Next(MaxCount / 2))
                             toRight = !toRight;
                     }
+
+                    Destination = new Point((int)(stepX * MaxCount), (int)(stepY * MaxCount));
+                    Console.WriteLine("{0} {1}'s Destination : {2}", FirstName, LastName, Destination);
                 }
 
                 left = (left + (toRight ? 1 : -1) * stepX);
@@ -349,6 +363,43 @@ namespace GoldFishPet
             return newImage;
         }
 
+        private void GenerateName()
+        {
+            var name = "";
+            var index = new Random().Next(1, 2);
+            if (Gender == FishGender.Male || (Gender == FishGender.ASexual && index == 1))
+                name = NameGenerator.GenerateRandomMaleFirstAndLastName();
+            else if (Gender == FishGender.Female || Gender == FishGender.ASexual)
+                name = NameGenerator.GenerateRandomFemaleFirstAndLastName();
+
+            var chars = name.ToCharArray().ToList();
+            var first = chars[0].ToString();
+            chars.RemoveAt(0);
+
+            for (int i = 1; i < name.Length; i++)
+            {
+                // if it is lowercase
+                if (chars[0].ToString() == chars[0].ToString().ToLower())
+                {
+                    // add it to the first name
+                    first += chars[0];
+                    // and remove it from the list
+                    chars.RemoveAt(0);
+                }
+                else
+                    break;
+            }
+
+            var last = "";
+            foreach (var c in chars)
+            {
+                last += c;
+            }
+
+            this.FirstName = first;
+            this.LastName = last;
+        }
+
         public void SetBits(Bitmap bitmap)
         {
             if (!haveHandle) return;
@@ -480,6 +531,14 @@ namespace GoldFishPet
             Died,
             Resurrected,
             Flushed
+        }
+
+        public enum FishGender
+        {
+            None,
+            ASexual,
+            Male,
+            Female
         }
 
         public class FishEventArgs
