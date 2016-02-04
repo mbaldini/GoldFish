@@ -1,0 +1,10 @@
+C:\Users\mbaldini\Desktop\GoldFishProject\bin\Debug\GoldFishPet.exe.config
+C:\Users\mbaldini\Desktop\GoldFishProject\bin\Debug\GoldFishPet.exe
+C:\Users\mbaldini\Desktop\GoldFishProject\bin\Debug\GoldFishPet.pdb
+C:\Users\mbaldini\Desktop\GoldFishProject\obj\Debug\GoldFishProject.csprojResolveAssemblyReference.cache
+C:\Users\mbaldini\Desktop\GoldFishProject\obj\Debug\GoldFishPet.FishForm.resources
+C:\Users\mbaldini\Desktop\GoldFishProject\obj\Debug\GoldFishPet.Properties.Resources.resources
+C:\Users\mbaldini\Desktop\GoldFishProject\obj\Debug\GoldFishProject.csproj.GenerateResource.Cache
+C:\Users\mbaldini\Desktop\GoldFishProject\obj\Debug\GoldFishPet.exe
+C:\Users\mbaldini\Desktop\GoldFishProject\obj\Debug\GoldFishPet.pdb
+C:\Users\mbaldini\Desktop\GoldFishProject\obj\Debug\GoldFishPet.parentForm.resources
