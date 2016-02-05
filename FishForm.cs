@@ -367,9 +367,9 @@ namespace GoldFishPet
         {
             var name = "";
             var index = new Random().Next(1, 2);
-            if (Gender == FishGender.Male || (Gender == FishGender.ASexual && index == 1))
+            if (Gender == FishGender.Male || (Gender == FishGender.Hermy && index == 1))
                 name = NameGenerator.GenerateRandomMaleFirstAndLastName();
-            else if (Gender == FishGender.Female || Gender == FishGender.ASexual)
+            else if (Gender == FishGender.Female || Gender == FishGender.Hermy)
                 name = NameGenerator.GenerateRandomFemaleFirstAndLastName();
 
             var chars = name.ToCharArray().ToList();
@@ -524,6 +524,26 @@ namespace GoldFishPet
             
         }
 
+        private string getGenderThing()
+        {
+            switch (this.Gender)
+            {
+                case FishGender.Hermy:
+                    return "H";
+                case FishGender.Male:
+                    return "M";
+                case FishGender.Female:
+                    return "F";
+                default:
+                    return "N";
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[{0}] {1}", getGenderThing(), this.FullName);
+        }
+
         public enum FishEventEnum
         {
             Born,
@@ -536,7 +556,7 @@ namespace GoldFishPet
         public enum FishGender
         {
             None,
-            ASexual,
+            Hermy,
             Male,
             Female
         }

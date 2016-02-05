@@ -67,19 +67,19 @@ namespace GoldFishPet
             switch (e.Action)
             {
                 case FishForm.FishEventEnum.Born:
-                    Log("Fishy {0} was born", e.Fish.FullName);
+                    Log("Fishy {0} was born", e.Fish.ToString());
                     break;
                 case FishForm.FishEventEnum.Matured:
-                    Log("Fishy {0} matured", e.Fish.FullName);
+                    Log("Fishy {0} matured", e.Fish.ToString());
                     break;
                 case FishForm.FishEventEnum.Died:
                     Fishie_Died_Sadface(sender, e);
                     break;
                 case FishForm.FishEventEnum.Resurrected:
-                    Log("Fishy {0} {1}", e.Fish.FullName, e.Reason);
+                    Log("Fishy {0} {1}", e.Fish.ToString(), e.Reason);
                     break;
                 case FishForm.FishEventEnum.Flushed:
-                    Log("Fishy {0} {1}", e.Fish.FullName, e.Reason);
+                    Log("Fishy {0} {1}", e.Fish.ToString(), e.Reason);
                     break;
                 default:
                     break;
@@ -88,7 +88,7 @@ namespace GoldFishPet
 
         void Fishie_Died_Sadface(object sender, FishForm.FishEventArgs e)
         {
-            Log("Fishy {0} {1}", e.Fish.FullName, e.Reason);
+            Log("Fishy {0} {1}", e.Fish.ToString(), e.Reason);
             var t = new System.Threading.Thread(() => 
             {
                 exitHandle.WaitOne(1000 * 60 * 5);
