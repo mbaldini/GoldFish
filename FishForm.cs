@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace GoldFishPet
 {
-    public partial class FishForm : Form
+    public partial class Fish : Form
     {
         public static RandomNameGeneratorLibrary.PersonNameGenerator NameGenerator = new RandomNameGeneratorLibrary.PersonNameGenerator();
         public string FirstName { get; set; }
@@ -52,14 +52,14 @@ namespace GoldFishPet
 
         public event FishEventHandler FishEvent;
 
-        public FishForm()
+        public Fish()
         {
             InitializeComponent();
             SizeScale = 1;
             InitFish();
         }
 
-        public FishForm(bool movingRight, Point location, double scale = 1, FishGender gender = FishGender.None)
+        public Fish(bool movingRight, Point location, double scale = 1, FishGender gender = FishGender.None)
         {
             InitializeComponent();
             toRight = movingRight;
@@ -448,9 +448,9 @@ namespace GoldFishPet
             Form2_MouseUp(this, ex);
         }
 
-        public FishForm[] CreateBaby(FishForm daddy)
+        public Fish[] CreateBaby(Fish daddy)
         {
-            var babies = new List<FishForm>();
+            var babies = new List<Fish>();
 
             if (new Random().NextDouble() > 0.8)
             {
@@ -459,7 +459,7 @@ namespace GoldFishPet
 
                 var location = new Point(this.Location.X - this.Width, this.Location.Y);
 
-                var babyFish = new FishForm(this.toRight, location, 0.4);
+                var babyFish = new Fish(this.toRight, location, 0.4);
                 babyFish.Show();
                 babies.Add(babyFish);
 
@@ -467,14 +467,14 @@ namespace GoldFishPet
                 if (seed < 0.2)
                 {
                     // Twins
-                    babyFish = new FishForm(this.toRight, location, 0.4);
+                    babyFish = new Fish(this.toRight, location, 0.4);
                     babyFish.Show();
                     babies.Add(babyFish);
                 }
                 if (seed < 0.05)
                 {
                     // Triplets
-                    babyFish = new FishForm(this.toRight, location, 0.4);
+                    babyFish = new Fish(this.toRight, location, 0.4);
                     babyFish.Show();
                     babies.Add(babyFish);
                 }
@@ -563,11 +563,11 @@ namespace GoldFishPet
 
         public class FishEventArgs
         {
-            public FishForm Fish { get; private set; }
+            public Fish Fish { get; private set; }
             public FishEventEnum Action { get; private set; }
             public string Reason { get; set; }
 
-            public FishEventArgs(FishForm fish, FishEventEnum action, string reason = "")
+            public FishEventArgs(Fish fish, FishEventEnum action, string reason = "")
             {
                 this.Fish = fish;
                 this.Action = action;

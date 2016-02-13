@@ -1,6 +1,6 @@
 ﻿namespace GoldFishPet
 {
-    partial class FishForm
+    partial class Fish
     {
         private System.ComponentModel.IContainer components = null;
         

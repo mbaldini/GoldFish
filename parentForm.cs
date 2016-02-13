@@ -12,7 +12,7 @@ namespace GoldFishPet
     public partial class parentForm : Form
     {
         object fishieLock = new object();
-        List<FishForm> Fishies = new List<FishForm>();
+        List<Fish> Fishies = new List<Fish>();
         int maxFishies = 25;
         public static System.Threading.ManualResetEvent exitHandle = new System.Threading.ManualResetEvent(false);
         private bool HasClosed = false;
@@ -43,8 +43,8 @@ namespace GoldFishPet
 
         void SpawnFishies()
         {
-            var mommyFish = new FishForm(true, new Point(-100, (Screen.PrimaryScreen.Bounds.Height / 2) - 50), 0.5, FishForm.FishGender.Female);
-            var daddyFish = new FishForm(false, new Point(Screen.AllScreens.Sum(x => x.Bounds.Width) + 100, (Screen.PrimaryScreen.Bounds.Height / 2) - 50), 0.5, FishForm.FishGender.Male);
+            var mommyFish = new Fish(true, new Point(-100, (Screen.PrimaryScreen.Bounds.Height / 2) - 50), 0.5, Fish.FishGender.Female);
+            var daddyFish = new Fish(false, new Point(Screen.AllScreens.Sum(x => x.Bounds.Width) + 100, (Screen.PrimaryScreen.Bounds.Height / 2) - 50), 0.5, Fish.FishGender.Male);
 
             var random = new Random();
             mommyFish.BirthDate = DateTime.Now.AddMinutes(-1 * random.Next(2, 12));
@@ -62,23 +62,23 @@ namespace GoldFishPet
             daddyFish.Show();
         }
 
-        void Fishie_Event(object sender, FishForm.FishEventArgs e)
+        void Fishie_Event(object sender, Fish.FishEventArgs e)
         {
             switch (e.Action)
             {
-                case FishForm.FishEventEnum.Born:
+                case Fish.FishEventEnum.Born:
                     Log("Fishy {0} was born", e.Fish.ToString());
                     break;
-                case FishForm.FishEventEnum.Matured:
+                case Fish.FishEventEnum.Matured:
                     Log("Fishy {0} matured", e.Fish.ToString());
                     break;
-                case FishForm.FishEventEnum.Died:
+                case Fish.FishEventEnum.Died:
                     Fishie_Died_Sadface(sender, e);
                     break;
-                case FishForm.FishEventEnum.Resurrected:
+                case Fish.FishEventEnum.Resurrected:
                     Log("Fishy {0} {1}", e.Fish.ToString(), e.Reason);
                     break;
-                case FishForm.FishEventEnum.Flushed:
+                case Fish.FishEventEnum.Flushed:
                     Log("Fishy {0} {1}", e.Fish.ToString(), e.Reason);
                     break;
                 default:
@@ -86,7 +86,7 @@ namespace GoldFishPet
             }
         }
 
-        void Fishie_Died_Sadface(object sender, FishForm.FishEventArgs e)
+        void Fishie_Died_Sadface(object sender, Fish.FishEventArgs e)
         {
             Log("Fishy {0} {1}", e.Fish.ToString(), e.Reason);
             var t = new System.Threading.Thread(() => 
@@ -101,7 +101,7 @@ namespace GoldFishPet
                 SpawnFishies();
         }
 
-        bool FishiesIntersect(FishForm mommy, FishForm daddy)
+        bool FishiesIntersect(Fish mommy, Fish daddy)
         {
             if (daddy.DesktopBounds.Contains(mommy.DesktopLocation) ||
                 mommy.DesktopBounds.Contains(daddy.DesktopLocation))
@@ -111,16 +111,21 @@ namespace GoldFishPet
             return false;
         }
 
+        Fish GetIntersectingFishy(Fish mommy)
+        {
+            return Fishies.FirstOrDefault(dad => dad != mommy && dad.Gender != mommy.Gender && FishiesIntersect(mommy, dad) && dad.IsMature && !dad.mouseDown);
+        }
+
         void Fishie_Moved(object sender, EventArgs e)
         {
-            var mommy = sender as FishForm;
+            var mommy = sender as Fish;
             lock(fishieLock)
             {
                 if (mommy != null)
                 {
                     if (mommy.IsMature && !mommy.mouseDown)
                     {
-                        var daddy = Fishies.FirstOrDefault(dad => dad != mommy && dad.Gender != mommy.Gender && FishiesIntersect(mommy, dad) && dad.IsMature && !dad.mouseDown);
+                        var daddy = GetIntersectingFishy(mommy);
                         if (daddy != null)
                         {
                             if (DateTime.Now.Subtract(mommy.LastBreedAttempt.GetValueOrDefault(new DateTime())) > MIN_TIME_BETWEEN_BREED_ATTEMPTS &&
